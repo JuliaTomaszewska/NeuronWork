@@ -1,0 +1,26 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+from neuron import h
+h.load_file('stdrun.hoc')
+
+class BallAndStick:
+    def __init__(self, gid):
+        self._gid = gid
+        self.soma = h.Section(name='soma', cell=self)
+        self.dend = h.Section(name='dend', cell=self)
+        self.dend.connect(self.soma)
+        self.soma.L = self.soma.diam = 12.6157
+        self.dend.L = 200
+        self.dend.diam = 1
+    def __repr__(self):
+        return 'BallAndStick[{}]'.format(self._gid)
+    
+myCell = BallAndStick(0)
+
+h.topology()
+ 
+
