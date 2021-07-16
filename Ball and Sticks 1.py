@@ -1,15 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 15 15:51:56 2021
-
-@author: jdt
-"""
-from neuron import h
-from neuron import gui
+#import necessary modules / files
+from neuron import h, gui 
 import matplotlib.pyplot as plt
 h.load_file('stdrun.hoc')
 
+#Define Class
 class BallAndStick:
     def __init__(self, gid):
         self._gid = gid
@@ -42,30 +36,40 @@ class BallAndStick:
         return 'BallAndStick[{}]'.format(self._gid)
 
 my_cell = BallAndStick(0)
-h.topology()
-
-
-#Run Simulation
+  
+#Stimulation
 stim = h.IClamp(my_cell.dend(1))
 stim.delay = 5
 stim.dur = 1
 stim.amp = 0.1
+
+#Recording
 soma_v = h.Vector().record(my_cell.soma(0.5)._ref_v)
 t = h.Vector().record(h._ref_t)
-h.finitialize(-65)
-h.continuerun(25)
+dend_v = h.Vector().record(my_cell.dend(0.5)._ref_v)
 
-#Run Simulation
-f1 = plt.figure()
+
+#Running Simulation
+h.finitialize(-65)
+h.continuerun(40)
+
+#Making Figure   
+#ps = h.PlotShape(True)
+
+#Plotting (searched online to find how to graph with Matplotlib)
+plt.figure()
 plt.xlabel('t (ms)')
 plt.ylabel('v (mV)')
-plt.plot(t, soma_v, linewidth=2)
-plt.show(f1)
-
-
-
-
-#Graphing 
+amps = [0.075 * i for i in range(1, 5)]
+colors = ['green', 'blue', 'red', 'black']
+for amp, scolor in zip(amps, colors):
+    #for segment of dendrite and line width 
+    for my_cell.dend.nseg, width in [(1, 1), (101, 0.5)]: 
+        stim.amp = amp
+        h.finitialize(-65)
+        h.continuerun(25)
+        plt.plot(t, soma_v, color = scolor, linewidth = width)
+        plt.plot(t, dend_v,'--', color = scolor, linewidth = width)
 
 
 
